@@ -10,30 +10,37 @@ Let's say you deploy and test your applications and services with tools other th
 
 > **Missing:** 
 > - Explanation of evaluation service
-> - List of supported monitoring tools
 > - Explanation of how the identification parameters are used in the queries of the plugins of the Evaluation service
 
 ## Prerequisites
 
-- Running Keptn installation (_quality gates_ installation is sufficient, see [here](../../installation/setup-keptn))
-- [Supported tool]() that can provide the [predefined Keptn metrics](../../reference/metrics/) for evaulation
+- Running Keptn installation (_quality gates only_ installation is sufficient, see [here](../../installation/setup-keptn))
 - *Service level objectives* for either individual services or an entire application (depends on your app and on the nature of tests)
+- Supported tool (currently either Prometheus or Dynatrace) that can provide the service level indicators ([SLI](../../reference/slo/)s) for evaulation
 
 ## Configure Keptn
 
-1. You need to create a Keptn project and let Keptn know about the used metrics provider (i.e., the endpoint and credentials if needed). 
+1. You need to create a Keptn project and let Keptn know about the used SLI provider (i.e., the endpoint and credentials if needed). 
 
     ```console
     keptn create project PROJECTNAME
     ```
-
-1. Then you create a Keptn service for each service that you want to evaluate using Keptn quality gates. For each service you need to provide a yaml file that describes the service level objectives of that service and details on how to identify that service when querying the metrics provider.
-
     ```console
-    keptn create service SERVICENAME --project PROJECTNAME --slo=SERVICENAME-slo.yaml
+    keptn configure prometheus --project PROJECTNAME --endpoint=http://a.b.c.d
+    OR
+    keptn configure dynatrace --project PROJECTNAME --endpoint=http://a.b.c.d --api-token=abcde12345
     ```
 
-    Example of a `slo.yaml` file is shown below. Find more information about identification
+1. Then you create a Keptn service for each service that you want to evaluate using Keptn quality gates. For each service you need to provide a yaml file that contains
+
+    - the service level objectives of that service and
+    - details on how to identify that service when querying the SLI provider
+
+    ```console
+    keptn create service SERVICENAME --project PROJECTNAME --slo=slo.yaml
+    ```
+
+    An example of a `slo.yaml` file is shown below. You find more information on service identification, service level indicators and objectives [here](../../reference/slo/).
 
     ```yaml
     identification:
