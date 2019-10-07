@@ -23,7 +23,7 @@ Let's say you deploy and test your applications and services with tools other th
 1. You need to create a Keptn project and let Keptn know about the used SLI provider (i.e., the endpoint and credentials if needed). 
 
     ```console
-    keptn create project PROJECTNAME
+    keptn create project PROJECTNAME 
     ```
     ```console
     keptn configure prometheus --project PROJECTNAME --endpoint=http://a.b.c.d
