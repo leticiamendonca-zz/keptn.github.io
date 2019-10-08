@@ -68,6 +68,10 @@ the current result is compared to the average of the three previous results.
 
 You usually want to evaluate the SLIs of a service after a test has been executed or after a certain amount of live traffic has hit that service. With `evaluation_time_frame` you can specify the time frame for which the SLIs will be evaluated against the objectives. You can specify the `start` and the `period` of the time frame.
 
+## Objectives
+
+An objective consists of an SLI and a `pass` and `needs_approval` value that can be positive or negative.
+
 # Example
 
 ```yaml
@@ -80,10 +84,10 @@ evaluation_time_frame:
 - start: "2019-10-07T10:17:00"
 - period: "5m"
 objectives:
-- response_time_p90:
+- request_latency_p90:
     - pass: "5%"
     - needs_approval: "10%"
-- response_time_p95:
+- request_latency_p95:
     - pass: "2%"
     - needs_approval: "5%"
 - throughput:

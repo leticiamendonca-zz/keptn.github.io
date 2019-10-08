@@ -44,7 +44,7 @@ Let's say you deploy and test your applications and services with tools other th
     ```
 
     An example of an `slo.yaml` file is shown below. You find more information on service identification, service level indicators and objectives [here](../../reference/slo/).
-
+    
     ```yaml
     service_filter:
     - namespace: "project-$STAGE"
@@ -53,12 +53,12 @@ Let's say you deploy and test your applications and services with tools other th
     - number_of_previous_results_to_compare: 1
     evaluation_time_frame:
     - start: "2019-10-07T10:17:00"
-    - stop: "2019-10-07T10:22:00"
+    - period: "5m"
     objectives:
-    - response_time_p90:
+    - request_latency_p90:
         - pass: "5%"
         - needs_approval: "10%"
-    - response_time_p95:
+    - request_latency_p95:
         - pass: "2%"
         - needs_approval: "5%"
     - throughput:
