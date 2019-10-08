@@ -7,35 +7,15 @@ keywords: [metrics, quality gates, sli, slo]
 
 A service level objective (SLO) is a target value or range of values for a service level that is measured by an SLI. An SLI (service level indicator) is a carefully defined quantitative measure of some aspect of the level of service that is provided.
 
-# Service Filter
-By default, Keptn supports [Prometheus](https://prometheus.io) and [Dynatrace](https://dynatrace.com) as SLI providers. In future versions of Keptn additional providers can be added.
-
-SLOs are defined per service. When querying SLIs from an SLI provider you can provide filter criteria to only get SLIs that are needed for an evaluation. For example, instead of retrieving the request latency for all services of an SLI provider, you can narrow down the result set to only the SLIs for the desired service. The filter criteria are key value pairs and depend on the SLI provider.
-
-Supported filter criteria for Prometheus:
-
-- namespace: 
-- pod_name: 
-- job: 
-
-Supported filter criteria for Dynatrace:
-
-- tags:
-- service id:
-
-In future versions of Keptn additional filter criteria can be added.
-
 # Service Level Indicators
 By default, Keptn supports the following SLIs, inspired by the Site Reliability Engineering book from Google (https://landing.google.com/sre/sre-book/chapters/service-level-objectives).
 
-In future versions of Keptn additional SLIs can be added.
-
-## Request Latency (p50,p90,p95)
+## Request Latency
 The time it takes for a service to execute and complete a task or how long it takes to return a response to a request.
 
-- `request_latency_p50`
-- `request_latency_p90`
-- `request_latency_p95`
+- `request_latency_p50` (median)
+- `request_latency_p90` (90th percentile)
+- `request_latency_p95` (95th percentile)
 
 
 ## System Throughput (requests per second)
@@ -49,13 +29,44 @@ The fraction of all received requests that procuced an error.
 - `error_rate`
 
 # Service Level Objectives
-An SLO consists of an SLI and evaluation success criteria that depends on the selected comparison strategy.
+An SLO consists of an SLI and evaluation success criteria that depends on the selected comparison strategy. Furthermore, you need to define a time frame for which the SLIs should be evaluated.
+
+## Service Filter
+SLOs are defined per service. When querying SLIs from an SLI provider you can provide filter criteria to only get SLIs that are needed for an evaluation. For example, instead of retrieving the request latency for all services of an SLI provider, you can narrow down the result set to only the SLIs for the desired service. The filter criteria are key value pairs and depend on the SLI provider.
+
+By default, Keptn supports [Prometheus](https://prometheus.io) and [Dynatrace](https://dynatrace.com) as SLI providers.
+
+Supported filter criteria for Prometheus:
+
+- namespace: 
+- pod_name: 
+- job: 
+
+Supported filter criteria for Dynatrace:
+
+- tags:
+- service id:
 
 ## Comparison Strategies
-By default, Keptn supports comparing with previous SLIs for evaluation. This strategy allows you to define the number of previous results you want to evaluate against.
+By default, Keptn supports comparing with previous SLIs for evaluation. This strategy allows you to define the number of previous results you want to evaluate against. For example, if you specify
 
-In future versions of Keptn additional comparison strategies can be added.
+```yaml
+strategy: "compare_with_previous"
+- number_of_previous_results_to_compare: 1
+```
 
+the current results is only compared to the previous result. Whereas if you specify
+
+```yaml
+strategy: "compare_with_previous"
+- number_of_previous_results_to_compare: 3
+```
+
+the current result is compared to the average of the three previous results.
+
+## Evaluation Time Frame
+
+You usually want to evaluate the SLIs of a service after a test has been executed or after a certain amount of live traffic has hit that service. With `evaluation_time_frame` you can specify the time frame for which the SLIs will be evaluated against the objectives. You can specify the `start` and the `period` of the time frame.
 
 # Example
 
@@ -67,7 +78,7 @@ strategy: "compare_with_previous"
 - number_of_previous_results_to_compare: 1
 evaluation_time_frame:
 - start: "2019-10-07T10:17:00"
-- stop: "2019-10-07T10:22:00"
+- period: "5m"
 objectives:
 - response_time_p90:
     - pass: "5%"
@@ -79,3 +90,7 @@ objectives:
     - pass: "-8%"
     - needs_approval: "-15%"
 ``` 
+
+# Current Limitations
+
+In future versions Keptn will support additional SLI providers, filter criteria, SLIs, and comparison strategies.
