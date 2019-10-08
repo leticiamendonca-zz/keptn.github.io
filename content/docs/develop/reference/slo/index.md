@@ -36,16 +36,43 @@ SLOs are defined per service. When querying SLIs from an SLI provider you can pr
 
 By default, Keptn supports [Prometheus](https://prometheus.io) and [Dynatrace](https://dynatrace.com) as SLI providers.
 
-Supported filter criteria for Prometheus:
+### Supported filter criteria for Prometheus:
+You can either filter by passing a combination of the namespace and the pod name, in which the service is deployed:
 
-- namespace: 
-- pod_name: 
-- job: 
+ ```yaml
+service_filter:
+  namespace: "project-production"
+  pod_name: "~carts-primary-.*"
+ ```
 
-Supported filter criteria for Dynatrace:
+ Alternatively, if you can pass the name of the scrape job config you have set up in Prometheus:
 
-- tags:
-- service id:
+ ```yaml
+service_filter:
+  job: "carts-sockshop-production"
+ ```
+
+### Supported filter criteria for Dynatrace:
+
+You can either pass a list of tags:
+
+ ```yaml
+service_filter:
+  tags:
+    - name: app
+      value: carts
+    - name: stage
+      value: production
+    - name: project
+      value: sockshop 
+ ```
+
+Or you can address a specific Dynatrace Service Entity
+
+```yaml
+service_filter:
+  service_id: <DT_SERVICE_ENTITY_ID> 
+ ```
 
 ## Comparison Strategies
 By default, Keptn supports comparing with previous SLIs for evaluation. This strategy allows you to define the number of previous results you want to evaluate against. For example, if you specify
@@ -76,7 +103,7 @@ An objective consists of an SLI and a `pass` and `needs_approval` value that can
 
 ```yaml
 service_filter:
-- namespace: "project-$STAGE"
+- namespace: "project-production"
 - pod_name: "~carts-primary-.*"
 strategy: "compare_with_previous"
 - number_of_previous_results_to_compare: 1
