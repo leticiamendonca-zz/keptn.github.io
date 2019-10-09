@@ -29,7 +29,7 @@ The fraction of all received requests that procuced an error.
 - `error_rate`
 
 # Service Level Objectives
-An SLO consists of an SLI and evaluation success criteria that depends on the selected comparison strategy. Furthermore, you need to define a time frame for which the SLIs should be evaluated.
+An SLO consists of an SLI and evaluation success criteria that depends on the selected comparison strategy.
 
 ## Service Filter
 SLOs are defined per service. When querying SLIs from an SLI provider you can provide filter criteria to only get SLIs that are needed for an evaluation. For example, instead of retrieving the request latency for all services of an SLI provider, you can narrow down the result set to only the SLIs for the desired service. The filter criteria are key value pairs and depend on the SLI provider.
@@ -64,15 +64,13 @@ strategy: "compare_with_previous"
 
 the current result is compared to the average of the three previous results.
 
-## Evaluation Time Frame
-
-You usually want to evaluate the SLIs of a service after a test has been executed or after a certain amount of live traffic has hit that service. With `evaluation_time_frame` you can specify the time frame for which the SLIs will be evaluated against the objectives. You can specify the `start` and the `period` of the time frame.
-
 ## Objectives
 
-An objective consists of an SLI and a `pass` and `needs_approval` value that can be positive or negative.
+An objective consists of an SLI and `pass` and `needs_approval` values that can be positive or negative. `pass` represents the upper limit up to which an evaluation is successful. `needs_approval` describes the border where an approval is needed to pass the evaluation. Both values must be stated in percent. All values beyond `pass` and `needs_approval` result in failed SLOs.
 
 # Example
+
+Assume we have a service with the following SLOs.
 
 ```yaml
 service_filter:
@@ -80,13 +78,10 @@ service_filter:
 - pod_name: "~carts-primary-.*"
 strategy: "compare_with_previous"
 - number_of_previous_results_to_compare: 1
-evaluation_time_frame:
-- start: "2019-10-07T10:17:00"
-- period: "5m"
 objectives:
 - request_latency_p90:
-    - pass: "5%"
-    - needs_approval: "10%"
+    - pass: "<5%"
+    - needs_approval: "<10%"
 - request_latency_p95:
     - pass: "2%"
     - needs_approval: "5%"
@@ -94,6 +89,23 @@ objectives:
     - pass: "-8%"
     - needs_approval: "-15%"
 ``` 
+
+The previous evaluation returned the following SLI values:
+
+```console
+request_latency_p90 = 450ms
+request_latency_p95 = 670ms
+throughput = 150
+```
+
+## All pass
+Assume the current evaluation returned the following SLI values:
+
+```console
+request_latency_p90 = 470ms (increase of 4.4%)
+request_latency_p95 = 680ms (increase of 1.5%)
+throughput = 140 (decrease of 6.7%)
+```
 
 # Current Limitations
 
